@@ -1,0 +1,73 @@
+- hosts: ora2pg
+  user: centos
+  gather_facts: false
+  vars_files:
+    - "vars/ids.yaml"
+    - "vars/{{ target_env }}_dbs.yaml"
+  vars:
+    trunct_options:
+      - enable_truncate: 1
+        name: ""
+        compare: "<"
+      - enable_truncate: 0
+        name: "no_truncate_"
+        compare: ">="
+  tasks:
+    - name: Creates directory for confs
+      file:
+        path: /u01/final/conf
+        state: directory
+      become: yes
+
+
+    - name: copy confs
+      template:
+        src: "template/ora2pg.conf"
+        dest: "/u01/final/conf/{{ target_env }}_{{ item.name }}ora2pg.conf"
+      become: yes
+      with_items:
+        - "{{ trunct_options }}"
+#
+
+
+#    - name: copy table defs part 1
+#      template:
+#        src: "template/tables-part-1.j2"
+#        dest: "/u01/final/tables-part-1"
+#      become: yes
+
+    - name: copy migrate script part 1
+      template:
+        src: "template/{{ item }}"
+        dest: "/u01/final/{{ item }}"
+        mode: a+x
+      become: yes
+      with_items:
+        - "migrate-part-1.sh"
+        - "migrate-part-2.sh"
+        - "migrate-part-3.sh"
+
+    - name: copy batch scripts
+      template:
+        src: "template/{{ item }}"
+        dest: "/u01/final/{{ item }}"
+        mode: a+x
+      become: yes
+      with_items:
+        - "migrate-batch-01.sh"
+        - "migrate-batch-02.sh"
+        - "migrate-batch-03-menu-item.sh"
+        - "migrate-batch-04-pending-menu-item.sh"
+        - "migrate-batch-05.sh"
+        - "migrate-batch-06-oauth-access-token.sh"
+        - "migrate-batch-07-jz-order-payment-transaction.sh"
+        - "vaccum-pg.sh"
+
+    - name: copy pg verify timezone
+      template:
+        src: "template/pg-verify-timezone.sh"
+        dest: "/u01/final/{{ target_env }}_pg-verify-timezone.sh"
+        mode: a+x
+      become: yes
+
+

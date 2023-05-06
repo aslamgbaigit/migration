@@ -1,0 +1,8 @@
+oracle_db_ip: 172.31.23.220
+oracle_db_username: jahezdbapp
+oracle_db_password:
+
+pg_db_host: migration-test-cluster.cluster-c5mmwuonnd6t.eu-central-1.rds.amazonaws.com
+pg_db_host_ro: migration-test-cluster.cluster-c5mmwuonnd6t.eu-central-1.rds.amazonaws.com
+pg_db_username: jahezdbapp
+pg_db_password:
